@@ -7,7 +7,12 @@ WORKDIR /srv
 # Install system dependencies and required tools
 # Install system dependencies and required tools
 RUN apt-get update && \
-    apt-get install -y libpq-dev
+    apt-get install -y \
+        libpq-dev \
+        git \
+        unzip \
+        zip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
