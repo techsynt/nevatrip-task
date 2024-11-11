@@ -2,25 +2,33 @@
 
 namespace App\Service;
 
+use App\Service\SomeApi\ApiClient;
+
 class OrderService
 {
-    private static int $barcode;
+    public function __construct(public readonly ApiClient $apiClient) {}
 
-    /**
-     * @param array $payload
-     * @return array
-     */
-    public function getDataArray(array $dataArray): array
+    public function getData(array $dataArray)
     {
-        self::$barcode = self::generateBarcode();
-        $dataArray['barcode'] = self::$barcode;
+        $dataArray['barcode'] = self::generateBarcode();
+        $bookResponse = $this->apiClient->book($dataArray);
+        if (isset($bookResponse['error'])) {
+            $dataArray['barcode'] = self::generateBarcode();
 
-        return $dataArray;
+            // тут вызов рекурсии
+            return $this->getData($dataArray);
+        }
+        $approveResponse = $this->apiClient->approve($dataArray['barcode']);
+        if (isset($approveResponse['error'])) {
+            return $approveResponse['error'];
+        }
+
+
+        //логика сохранения
+
+
     }
 
-    /**
-     * @return int
-     */
     private static function generateBarcode(): int
     {
         return substr(crc32(gethostname()), 0, 4).mt_rand(1000, 9999);

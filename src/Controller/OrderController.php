@@ -16,6 +16,7 @@ class OrderController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $dataArray = json_decode($request->getContent(), true);
-        $this->orderService->getDataArray($dataArray);
+        dd($this->orderService->getData($dataArray));
+
     }
 }
