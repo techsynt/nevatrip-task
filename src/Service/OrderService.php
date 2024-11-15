@@ -10,10 +10,17 @@ use Doctrine\ORM\EntityManagerInterface;
 class OrderService
 {
     private array $barcodes;
+
     public function __construct(public readonly ApiClient $apiClient, private EntityManagerInterface $em) {}
 
     public function bookTickets(int $eventId, $eventDate, array $tickets): void
     {
+        /*
+         * Создаем сначала объект "ордер", для привязки к тикетам.
+         * Проходимся через массив тикетов c помощью foreach, так как для каждого тикета нужен баркод,
+         * то внутри еще один цикл for, в нем вызывается метод book для каждого тикета до тех пор,
+         * пока он не отработает без возврата ошибки - для этого исп. do - while конструкция
+         */
         $order = new Order();
         $order->setEventId($eventId);
         $order->setEventDate($eventDate);
@@ -21,6 +28,7 @@ class OrderService
             for ($i = 0; $i < $ticket['quantity']; ++$i) {
                 do {
                     $barcode = self::generateBarcode();
+                    // Имитация вызова апи book до тех пор пока не пройдет без ошибок
                     $bookResponse = $this->apiClient->book(
                         [
                             'event_id' => $eventId,
@@ -31,7 +39,7 @@ class OrderService
                         ]
                     );
                 } while (isset($bookResponse['error']));
-
+                // так как мне после брони нужно имитировать approve с передачей баркодов заказа, собираю их в массив
                 $this->barcodes[] = $barcode;
 
                 $ticketObj = new Ticket();
@@ -46,14 +54,17 @@ class OrderService
             }
         }
 
+        // Имитация вызова апи approve
         $approveResponse = $this->apiClient->approve([$this->barcodes]);
-        if (isset($approveResponse['error'])){
+        if (isset($approveResponse['error'])) {
             throw new \RuntimeException('Failed to approve ticket: '.$approveResponse['error']);
         }
-
+        // калькуляция суммы реализована в сущности
         $order->calculateTotalPrice();
         $this->em->persist($order);
         $this->em->flush();
+
+        // сбрасываю массив баркодов
         $this->barcodes = [];
     }
 

@@ -12,8 +12,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class OrderController extends AbstractController
 {
+    /**
+     * @param OrderService $orderService
+     */
     public function __construct(public OrderService $orderService) {}
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/', methods: 'POST')]
     public function create(Request $request): JsonResponse
     {

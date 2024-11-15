@@ -56,7 +56,7 @@ class Ticket
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): TicketType
     {
         return $this->type;
     }
