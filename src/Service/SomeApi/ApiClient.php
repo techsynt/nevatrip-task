@@ -11,9 +11,9 @@ class ApiClient
             : ['error' => 'barcode already exists'];
     }
 
-    public function approve(int $barcode): array
+    public function approve(array $barcodes): array
     {
-        if (rand(0, 1)) {
+        if (mt_rand(0, 1)) {
             return ['message' => 'order successfully aproved'];
         }
         $errors = [

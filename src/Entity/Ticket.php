@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\TicketType;
 use App\Repository\TicketRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,6 +18,15 @@ class Ticket
     #[ORM\JoinColumn(nullable: false)]
     private ?Order $ord_id = null;
 
+    #[ORM\Column]
+    private ?int $price = null;
+
+    #[ORM\Column(length: 255, enumType: TicketType::class)]
+    private TicketType $type;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $barcode = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,6 +40,42 @@ class Ticket
     public function setOrdId(?Order $ord_id): static
     {
         $this->ord_id = $ord_id;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): static
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(TicketType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getBarcode(): ?string
+    {
+        return $this->barcode;
+    }
+
+    public function setBarcode(string $barcode): static
+    {
+        $this->barcode = $barcode;
 
         return $this;
     }

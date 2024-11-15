@@ -2,7 +2,10 @@
 
 namespace App\Entity\Enum;
 
-class TicketType
+enum TicketType: string
 {
-
+    case adult = 'adult';
+    case kid = 'kid';
+    case group = 'group';
+    case discount = 'discount';
 }
