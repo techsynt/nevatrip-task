@@ -9,9 +9,9 @@
 Запуск приложения: Выполняем в терминале поочередно команды ниже
 
 
-docker compose up --build -d
-docker compose exec php composer install
-docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
+    docker compose up --build -d
+    docker compose exec php composer install
+    docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
 
 
 Для корректной отработки кода предполагается, что будет отправляться post запрос на адрес http://localhost:8080/ след. вида:
