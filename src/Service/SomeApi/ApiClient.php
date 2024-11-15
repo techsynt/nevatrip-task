@@ -14,7 +14,7 @@ class ApiClient
     public function approve(array $barcodes): array
     {
         if (mt_rand(0, 1)) {
-            return ['message' => 'order successfully aproved'];
+            return ['message' => 'order successfully approved'];
         }
         $errors = [
             ['error' => 'event cancelled'],

@@ -42,7 +42,7 @@ class OrderController extends AbstractController
 
             $this->orderService->bookTickets($eventId, $eventDate, $tickets);
 
-            return new JsonResponse(['message' => 'order successfully aproved'], 201);
+            return new JsonResponse(['message' => 'order successfully approved'], 201);
         } catch (\Throwable $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], 400);
         }

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class OrderService
 {
+    private array $barcodes;
     public function __construct(public readonly ApiClient $apiClient, private EntityManagerInterface $em) {}
 
     public function bookTickets(int $eventId, $eventDate, array $tickets): void
@@ -31,9 +32,7 @@ class OrderService
                     );
                 } while (isset($bookResponse['error']));
 
-                if (isset($approveResponse['error'])) {
-                    throw new \RuntimeException('Failed to approve ticket: '.$approveResponse['error']);
-                }
+                $this->barcodes[] = $barcode;
 
                 $ticketObj = new Ticket();
                 $ticketObj->setOrdId($order);
@@ -46,13 +45,20 @@ class OrderService
                 $order->addTicket($ticketObj);
             }
         }
+
+        $approveResponse = $this->apiClient->approve([$this->barcodes]);
+        if (isset($approveResponse['error'])){
+            throw new \RuntimeException('Failed to approve ticket: '.$approveResponse['error']);
+        }
+
         $order->calculateTotalPrice();
         $this->em->persist($order);
         $this->em->flush();
+        $this->barcodes = [];
     }
 
     private static function generateBarcode(): int
     {
-        return substr(crc32(gethostname()), 0, 4).mt_rand(1000, 9999);
+        return substr(crc32(gethostname()), 0, 2).mt_rand(100000, 999999);
     }
 }
